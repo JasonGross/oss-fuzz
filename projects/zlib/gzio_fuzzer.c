@@ -32,6 +32,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t dataLen) {
     close(mkstemp(fname));
     unsigned mode_sz = (dataLen ? (--dataLen, *data++) | 2 : 8) & 0xF;
     char mode[mode_sz];
+    memset(mode, 0, mode_sz);
     memcpy(mode, data, dataLen >= mode_sz ? mode_sz - 1: dataLen);
     mode[mode_sz - 1] = 0;
     file = gzopen(fname, mode);
@@ -52,6 +53,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t dataLen) {
         case 1: {
           unsigned sz = dataLen ? ((--dataLen, *data++)&0xF) + 1 : 8;
           char input[sz];
+          memset(input, 0, sz);
           memcpy(input, data, dataLen >= sz ? sz - 1: dataLen);
           input[sz - 1] = 0;
           if(gzputs(file, input) < 0)
@@ -63,6 +65,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t dataLen) {
           unsigned nitems = dataLen ? ((--dataLen, *data++)&0xF) + 1 : 8;
           unsigned count = sz * nitems;
           char input[count];
+          memset(input, 0, count);
           memcpy(input, data, dataLen >= count ? count - 1: dataLen);
           input[count - 1] = 0;
           if(gzfwrite(input, sz, nitems, file) <= 0)
@@ -136,6 +139,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t dataLen) {
             case 3: {
              unsigned sz = dataLen ? ((--dataLen, *data++)&0xF)+1 : 8;
              char input[sz];
+             memset(input, 0, sz);
              memcpy(input, data, dataLen >= sz ? sz - 1: dataLen);
              input[sz - 1] = 0;
              gzprintf(file, formats[nformat], input);
